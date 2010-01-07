@@ -29,7 +29,7 @@
 {
 	CPView		_reflectionView;
 	CPImageView	_targetImageView;
-	int			_reflectionHeight;
+	int		_reflectionHeight;
 }
 
 - (id)initWithImageView:(CPImageView)anImageView
