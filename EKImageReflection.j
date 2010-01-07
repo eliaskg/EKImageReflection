@@ -35,9 +35,9 @@
 - (id)initWithImageView:(CPImageView)anImageView
 {
 	self = [super initWithFrame:CGRectMake([anImageView frame].origin.x, 
-								[anImageView frame].origin.y + [anImageView frame].size.height,
-								[anImageView frame].size.width,
-								[anImageView frame].size.height)];
+						[anImageView frame].origin.y + [anImageView frame].size.height,
+						[anImageView frame].size.width,
+						[anImageView frame].size.height)];
 	
 	if(self) {
 		_targetImageView = anImageView;
