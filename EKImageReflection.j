@@ -106,9 +106,4 @@
 	return _reflectionHeight;
 }
 
-- (void)imageDidLoad:(CPNotification)aNotification
-{
-	console.log("load");
-}
-
 @end
