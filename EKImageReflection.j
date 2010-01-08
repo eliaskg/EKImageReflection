@@ -45,6 +45,7 @@
 		[self setAlphaValue:0.2];
 		_reflectionView = [[CPView alloc] initWithFrame:CGRectMake(0, 0, [self frame].size.width, [self frame].size.height)];
 		
+		// Draws the reflection after image is loaded.
 		[anImageView image]._image.onload = function() {
 			[self drawReflection];
 		}
@@ -61,7 +62,7 @@
 	var reflectionWidth = [_targetImageView frame].size.width;
 	var DOMElement = _reflectionView._DOMElement;
 	
-	// Empties the view before addimg the image or canvas
+	// Empties the view before adding the image or canvas
 	while(DOMElement.hasChildNodes()) {
 		DOMElement.removeChild(DOMElement.lastChild);
 	}
