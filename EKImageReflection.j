@@ -45,7 +45,7 @@
 		_targetImageView = anImageView;
 		_reflectionHeight = CGRectGetHeight([anImageView bounds]) / 3;
 		_alphaValue = 0.5;
-		//[self setAlphaValue:0.2];
+		
 		_reflectionView = [[CPView alloc] initWithFrame:CGRectMake(0, 0, [self frame].size.width, [self frame].size.height)];
 		
 		_image = new Image();
@@ -88,6 +88,7 @@
 	// Use canvas in modern browsers
 	else {
 		var canvas = document.createElement("canvas");
+		
 		if (canvas.getContext) {
 			var context = canvas.getContext("2d");
         	
