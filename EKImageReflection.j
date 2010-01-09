@@ -30,6 +30,8 @@
 	CPView		_reflectionView;
 	CPImageView	_targetImageView;
 	int		_reflectionHeight;
+	float		_alphaValue;
+	DOMElement	_image;
 }
 
 - (id)initWithImageView:(CPImageView)anImageView
@@ -42,13 +44,18 @@
 	if(self) {
 		_targetImageView = anImageView;
 		_reflectionHeight = CGRectGetHeight([anImageView bounds]) / 3;
-		[self setAlphaValue:0.2];
+		_alphaValue = 0.5;
+		//[self setAlphaValue:0.2];
 		_reflectionView = [[CPView alloc] initWithFrame:CGRectMake(0, 0, [self frame].size.width, [self frame].size.height)];
 		
+		_image = new Image();
+		
 		// Draws the reflection after image is loaded.
-		[anImageView image]._image.onload = function() {
+		_image.onload = function() {
 			[self drawReflection];
 		}
+		
+		_image.src = [anImageView image]._image.src;
 		
 		[self addSubview:_reflectionView];
 	}
@@ -57,54 +64,81 @@
 
 - (void)drawReflection
 {	
-	var image = [_targetImageView image]._image;
-	var imageHeight = [_targetImageView frame].size.height;
-	var reflectionWidth = [_targetImageView frame].size.width;
+	var imageHeight = _image.height;
+	var imageWidth = _image.width;
 	var DOMElement = _reflectionView._DOMElement;
-	
+
 	// Empties the view before adding the image or canvas
 	while(DOMElement.hasChildNodes()) {
 		DOMElement.removeChild(DOMElement.lastChild);
+	}	
+	
+	// Use MS effects if is IE
+	if (document.all && !window.opera) {
+		var reflection = document.createElement("img");
+		reflection.src = _image.src;
+		reflection.style.width = imageWidth + "px";
+		reflection.style.display = "block";
+		reflection.style.height = imageHeight + "px";
+		
+		reflection.style.filter = "flipv progid:DXImageTransform.Microsoft.Alpha(opacity = " + (_alphaValue*100) + ", style = 1, finishOpacity = 0, startx = 0, starty = 0, finishx = 0, finishy = " + ((_reflectionHeight / imageHeight)*100) + ")";
+		
+		DOMElement.appendChild(reflection);
 	}
-	
-	var canvas = document.createElement("canvas");
-	var context = canvas.getContext("2d");
-	
-	canvas.style.height = _reflectionHeight + "px";
-	canvas.style.width = reflectionWidth + "px";
-	canvas.height = _reflectionHeight;
-	canvas.width = reflectionWidth;
-	
-	DOMElement.appendChild(canvas);
-	
-	context.save();
-	
-	context.translate(0, image.height-1);
-	context.scale(1, -1);
-	context.drawImage(image, 0, 0, reflectionWidth, image.height);
-	
-	context.restore();
-	
-	context.globalCompositeOperation = "destination-out";
-	var gradient = context.createLinearGradient(0, 0, 0, _reflectionHeight);
-	
-	gradient.addColorStop(1, "rgba(255, 255, 255, 1.0)");
-	gradient.addColorStop(0, "rgba(255, 255, 255, 0.0)");
-	
-	context.fillStyle = gradient;
-	context.rect(0, 0, reflectionWidth, _reflectionHeight*2);
-	context.fill();
+	// Use canvas in modern browsers
+	else {
+		var canvas = document.createElement("canvas");
+		if (canvas.getContext) {
+			var context = canvas.getContext("2d");
+        	
+			canvas.style.height = _reflectionHeight + "px";
+			canvas.style.width = imageWidth + "px";
+			canvas.height = _reflectionHeight;
+			canvas.width = imageWidth;
+        	
+			DOMElement.appendChild(canvas);
+        	
+			context.save();
+        	
+			context.translate(0, _image.height-1);
+			context.scale(1, -1);
+			context.drawImage(_image, 0, 0, imageWidth, _image.height);
+        	
+			context.restore();
+        	
+			context.globalCompositeOperation = "destination-out";
+			var gradient = context.createLinearGradient(0, 0, 0, _reflectionHeight);
+        	
+			gradient.addColorStop(1, "rgba(255, 255, 255, 1.0)");
+			gradient.addColorStop(0, "rgba(255, 255, 255, " + (1-_alphaValue) + ")");
+        	
+			context.fillStyle = gradient;
+			context.rect(0, 0, imageWidth, _reflectionHeight*2);
+			context.fill();
+		}
+	}
 }
 
 - (void)setReflectionHeight:(int)aValue
 {
-	_reflectionHeight = aValue;
+	_reflectionHeight = Math.floor(aValue);
 	[self drawReflection];
 }
 
 - (int)reflectionHeight
 {
 	return _reflectionHeight;
+}
+
+- (void)setAlphaValue:(float)aValue
+{
+	_alphaValue = aValue;
+	[self drawReflection];
+}
+
+- (float)alphaValue
+{
+	return _alphaValue;
 }
 
 @end
