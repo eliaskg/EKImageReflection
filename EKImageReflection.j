@@ -55,6 +55,7 @@
 			[self drawReflection];
 		}
 		
+		// Creates the source for the reflection
 		_image.src = [anImageView image]._image.src;
 		
 		[self addSubview:_reflectionView];
